@@ -1,6 +1,10 @@
 # Setup azurerm as a state backend
 terraform {
   backend "azurerm" {
+  resource_group_name  = "araev201"
+  storage_account_name = "araev201"
+  container_name = "araev201"
+  key = "terraform.tfstate"
   }
 }
 
@@ -14,10 +18,6 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_resource_group" "bdcc" {
   name = "rg-${var.ENV}-${var.LOCATION}"
   location = var.LOCATION
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   tags = {
     region = var.BDCC_REGION
@@ -41,10 +41,6 @@ resource "azurerm_storage_account" "bdcc" {
     ip_rules = values(var.IP_RULES)
   }
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     region = var.BDCC_REGION
     env = var.ENV
@@ -58,9 +54,6 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "gen2_data" {
   name = "data"
   storage_account_id = azurerm_storage_account.bdcc.id
 
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "azurerm_databricks_workspace" "bdcc" {
